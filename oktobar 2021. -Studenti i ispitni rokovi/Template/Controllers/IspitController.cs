@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -68,15 +68,28 @@ namespace Template.Controllers
 
         [Route("PrijemPodataka/{idPredmeta}/{stringSaIdevimaRokova}")]
         [HttpGet]
-        public async Task<List<StudentPredmet>> PrijemPodataka(int idPredmeta,string stringSaIdevimaRokova)
+        public async Task<JsonResult> PrijemPodataka(int idPredmeta,string stringSaIdevimaRokova)
         {
 
           var nadjeniStudenti= await Context.StudentPredmet.Include(p=>p.IspitniRok).Include(p=>p.Predmet).Include(p=>p.Student)
           .Where(p=>p.Predmet.ID==idPredmeta && stringSaIdevimaRokova.Contains((p.IspitniRok.ID).ToString())).ToListAsync();
 
-                                                /*          [{"id":1,"ocena":7,"ispitniRok":{"id":1,"naziv":"januarski"},"student":{"id":1,"indeks":15565,"ime":"Aleksandar","prezime":"Tasic"},"predmet":{"id":1,"naziv":"web programeri","godina":3}},{"id":8,"ocena":9,"ispitniRok":{"id":3,"naziv":"martovski"},"student":{"id":3,"indeks":17875,"ime":"Aleksandar","prezime":"Tadic"},"predmet":{"id":1,"naziv":"web programeri","godina":3}},{"id":1010,"ocena":9,"ispitniRok":{"id":1,"naziv":"januarski"},
+/*          [{"id":1,"ocena":7,"ispitniRok":{"id":1,"naziv":"januarski"},"student":{"id":1,"indeks":15565,"ime":"Aleksandar","prezime":"Tasic"},"predmet":{"id":1,"naziv":"web programeri","godina":3}},{"id":8,"ocena":9,"ispitniRok":{"id":3,"naziv":"martovski"},"student":{"id":3,"indeks":17875,"ime":"Aleksandar","prezime":"Tadic"},"predmet":{"id":1,"naziv":"web programeri","godina":3}},{"id":1010,"ocena":9,"ispitniRok":{"id":1,"naziv":"januarski"},
                                                 "student":{"id":1,"indeks":15565,"ime":"Aleksandar","prezime":"Tasic"},"predmet":{"id":1,"naziv":"web programeri","godina":3}},{"id":1011,"ocena":9,"ispitniRok":{"id":1,"naziv":"januarski"},"student":{"id":1,"indeks":15565,"ime":"Aleksandar","prezime":"Tasic"},"predmet":{"id":1,"naziv":"web programeri","godina":3}},{"id":1014,"ocena":10,"ispitniRok":{"id":1,"naziv":"januarski"},"student":{"id":3,"indeks":17875,"ime":"Aleksandar","prezime":"Tadic"},"predmet":{"id":1,"naziv":"web programeri","godina":3}},{"id":2010,"ocena":10,"ispitniRok":{"id":1,"naziv":"januarski"},
                                                 "student":{"id":3,"indeks":17875,"ime":"Aleksandar","prezime":"Tadic"},"predmet":{"id":1,"naziv":"web programeri","godina":3}}]*/
+//kako izdvojiti samo ono sto nam treba u responsu
+          var nadjeniStudenti1=nadjeniStudenti.Select(p =>
+                    new
+                    {
+                        Index=p.Student.Indeks,
+                        Ime = p.Student.Ime,
+                        Prezime = p.Student.Prezime,
+                        Predmet = p.Predmet.Naziv,
+                        Rok = p.IspitniRok.Naziv,
+                        Ocena = p.Ocena
+                    }).ToList();
+
+                                                
 
           /*List<Student> nadjeniStudenti=new List<Student>();////moras definisati pre dodavanja u listu elemenata
 
@@ -87,11 +100,11 @@ namespace Template.Controllers
 */
           if (nadjeniStudenti!=null){
                        
-              return nadjeniStudenti;
+              return new JsonResult(nadjeniStudenti1);
               }
           else 
           {
-            return nadjeniStudenti=null;
+            return new JsonResult(null);
           }
         }
 
