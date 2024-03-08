@@ -1,3 +1,5 @@
+Projekat u kom se koristi JavaScript, kao i .NET-a i platforma Azure
+
 # WEB PROGRAMIRANJE
 
 oktobarski-2021.-student-i-ispiti![image](https://user-images.githubusercontent.com/96747833/171310379-b3a1f57c-4b0f-455a-81ef-0e00b7f9502f.png)
